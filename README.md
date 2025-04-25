@@ -27,9 +27,33 @@ This is a template for creating new Julia packages. When you create a repository
 ## How to Use
 
 1. Click "Use this template" to create a new repository
-2. Wait for the initialization workflow to complete
-3. Clone your new repository
-4. Start developing your package!
+2. Create a Personal Access Token (PAT) and add it to your repository (see section below)
+3. Wait for the initialization workflow to complete
+4. Clone your new repository
+5. Start developing your package!
+
+## Required: Personal Access Token Setup
+
+For the initialization workflow to work properly, you need to set up a Personal Access Token (PAT):
+
+1. Create a Personal Access Token:
+   - Go to your GitHub account → Settings → Developer settings → Personal access tokens → Tokens (classic)
+   - Click "Generate new token" (classic)
+   - Give it a descriptive name (e.g., "Package Template Initialize")
+   - Set an appropriate expiration
+   - Select the `repo` scope (full control of repositories)
+   - Click "Generate token"
+   - Copy the generated token (you won't see it again!)
+
+2. Add the token to your repository:
+   - Go to your newly created repository
+   - Go to Settings → Secrets and variables → Actions
+   - Click "New repository secret"
+   - Name: `PAT_TOKEN`
+   - Value: paste your copied token
+   - Click "Add secret"
+
+This token allows the initialization workflow to commit changes to workflow files in your repository.
 
 ## Custom Configuration
 

@@ -9,13 +9,16 @@ on:
 jobs:
   initialize:
     # Skip running on the PackageTemplate repository itself
-    if: github.event.repository.name != 'PackageTemplate'
+    # Also run only if the .init_template_run file doesn't exist
+    if: github.event.repository.name != 'PackageTemplate' && !contains(github.event.head_commit.message, 'Initialize package template')
     runs-on: ubuntu-latest
     permissions:
       contents: write
       pull-requests: write
     steps:
       - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.PAT_TOKEN }}
       
       - name: Set up Julia
         uses: julia-actions/setup-julia@v2
@@ -126,26 +129,27 @@ jobs:
         env:
           GITHUB_REPOSITORY: ${{ github.repository }}
       
-      - name: Create Pull Request
-        uses: peter-evans/create-pull-request@v5
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          commit-message: Initialize package template with repository name and new UUID
-          title: Initialize package template
-          body: |
-            This PR initializes the package template with:
-            - Package name set to match repository name
-            - A new UUID generated for the package
-            - Source files renamed to match package name
-            - Documentation and tests updated with correct references
-            
-            Please review and merge to complete setup.
-          branch: initialize-template
-          base: main
+      - name: Configure Git
+        run: |
+          git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
       
       - name: Create welcome issue
         uses: peter-evans/create-issue-from-file@v5
         with:
+          token: ${{ secrets.PAT_TOKEN }}
           title: Welcome to your new Julia package
           content-filepath: .github/post-init.md
-          labels: documentation 
+          labels: documentation
+      
+      # Delete the workflow file itself
+      - name: Delete initialization workflow
+        run: rm -f .github/workflows/initialize_template.yml
+      
+      - name: Commit and push changes
+        run: |
+          git add -A
+          git commit -m "Initialize package template with repository name and new UUID" || echo "No changes to commit"
+          git push
+        env:
+          GITHUB_TOKEN: ${{ secrets.PAT_TOKEN }} 
