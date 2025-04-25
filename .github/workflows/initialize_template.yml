@@ -104,7 +104,8 @@ jobs:
                   ("CurrentModule = PkgName", "CurrentModule = $pkg_name"),
                   ("# PkgName", "# $pkg_name"),
                   ("Documentation for [PkgName]", "Documentation for [$pkg_name]"),
-                  ("PkgName.jl", "$pkg_name_with_jl")
+                  ("PkgName.jl", "$pkg_name_with_jl"),
+                  ("https://github.com/username/PkgName.jl", "https://github.com/$user_name/$pkg_name_with_jl")
               ],
               "scripts/bench.jl" => [
                   ("using PkgName", "using $pkg_name"),
