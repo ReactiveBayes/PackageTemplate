@@ -35,11 +35,17 @@ jobs:
           
           # Get repository info
           repo_name = ENV["GITHUB_REPOSITORY"]
-          user_name, pkg_name = split(repo_name, "/")
+          user_name, repo_name_part = split(repo_name, "/")
+          
+          # Strip .jl suffix for the module name if present
+          pkg_name = endswith(repo_name_part, ".jl") ? repo_name_part[1:end-3] : repo_name_part
+          # Full package name with .jl for GitHub URLs and documentation
+          pkg_name_with_jl = endswith(repo_name_part, ".jl") ? repo_name_part : "$(repo_name_part).jl"
           
           println("Repository: $repo_name")
           println("Owner: $user_name")
-          println("Package: $pkg_name")
+          println("Package name: $pkg_name")
+          println("Package name with .jl: $pkg_name_with_jl")
           
           # Generate new UUID
           new_uuid = string(UUIDs.uuid4())
@@ -56,16 +62,16 @@ jobs:
                   ("authors = [\"PLACEHOLDERNAME_CHANGE_PROJECT_TOML_LINE_3\"]", "authors = [\"$user_name\"]")
               ],
               "Makefile" => [
-                  ("PLACEHOLDERNAME_CHANGE_MAKEFILE_LINE_22.jl", "$(pkg_name).jl")
+                  ("PLACEHOLDERNAME_CHANGE_MAKEFILE_LINE_22.jl", "$(pkg_name_with_jl)")
               ],
               "README.md" => [
-                  ("username/PkgName.jl", "$user_name/$pkg_name.jl"),
-                  ("PkgName.jl", "$pkg_name.jl"),
-                  ("username.github.io/PkgName.jl", "$user_name.github.io/$pkg_name.jl")
+                  ("username/PkgName.jl", "$user_name/$pkg_name_with_jl"),
+                  ("PkgName.jl", "$pkg_name_with_jl"),
+                  ("username.github.io/PkgName.jl", "$user_name.github.io/$pkg_name_with_jl")
               ],
               "test/runtests.jl" => [
                   ("using PkgName", "using $pkg_name"),
-                  ("@testset \"PkgName.jl\"", "@testset \"$pkg_name.jl\""),
+                  ("@testset \"PkgName.jl\"", "@testset \"$pkg_name_with_jl\""),
                   ("Aqua.test_all(PkgName)", "Aqua.test_all($pkg_name)"),
                   ("JET.test_package(PkgName)", "JET.test_package($pkg_name)")
               ],
@@ -76,9 +82,15 @@ jobs:
                   ("using PkgName", "using $pkg_name"),
                   ("DocMeta.setdocmeta!(PkgName,", "DocMeta.setdocmeta!($pkg_name,"),
                   ("modules=[PkgName]", "modules=[$pkg_name]"),
-                  ("sitename=\"PkgName.jl\"", "sitename=\"$pkg_name.jl\""),
-                  ("canonical=\"https://username.github.io/PkgName.jl", "canonical=\"https://$user_name.github.io/$pkg_name.jl"),
-                  ("repo=\"github.com/username/PkgName.jl\"", "repo=\"github.com/$user_name/$pkg_name.jl\"")
+                  ("modules = [PkgName]", "modules = [$pkg_name]"),
+                  (":(using PkgName)", ":(using $pkg_name)"),
+                  ("sitename=\"PkgName.jl\"", "sitename=\"$pkg_name_with_jl\""),
+                  ("sitename = \"PkgName.jl\"", "sitename = \"$pkg_name_with_jl\""),
+                  ("canonical=\"https://username.github.io/PkgName.jl", "canonical=\"https://$user_name.github.io/$pkg_name_with_jl"),
+                  ("canonical = \"https://username.github.io/PkgName.jl", "canonical = \"https://$user_name.github.io/$pkg_name_with_jl"),
+                  ("repo=\"github.com/username/PkgName.jl\"", "repo=\"github.com/$user_name/$pkg_name_with_jl\""),
+                  ("repo = \"github.com/username/PkgName.jl\"", "repo = \"github.com/$user_name/$pkg_name_with_jl\""),
+                  ("authors = \"Your Name <your.email@example.com> and contributors\"", "authors = \"$user_name and contributors\"")
               ],
               "docs/Project.toml" => [
                   ("PkgName = \"$template_uuid\"", "$pkg_name = \"$new_uuid\"")
@@ -92,7 +104,12 @@ jobs:
                   ("CurrentModule = PkgName", "CurrentModule = $pkg_name"),
                   ("# PkgName", "# $pkg_name"),
                   ("Documentation for [PkgName]", "Documentation for [$pkg_name]"),
-                  ("PkgName.jl", "$pkg_name.jl")
+                  ("PkgName.jl", "$pkg_name_with_jl")
+              ],
+              "scripts/bench.jl" => [
+                  ("using PkgName", "using $pkg_name"),
+                  ("PkgBenchmark.benchmarkpkg(PkgName", "PkgBenchmark.benchmarkpkg($pkg_name"),
+                  ("BenchmarkTools.judge(PkgName", "BenchmarkTools.judge($pkg_name")
               ]
           )
           
