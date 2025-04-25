@@ -10,7 +10,7 @@ makedocs(;
     format = Documenter.HTML(;
         canonical = "https://username.github.io/PkgName.jl", edit_link = "main", assets = String[]
     ),
-    pages = ["Home" => "index.md", "Implementation" => "implementation.md"]
+    pages = ["Home" => "index.md"]
 )
 
 deploydocs(; repo = "github.com/username/PkgName.jl", devbranch = "main")
