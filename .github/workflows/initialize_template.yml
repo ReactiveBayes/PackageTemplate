@@ -134,7 +134,7 @@ jobs:
           git push
       
       - name: Create welcome issue
-        uses: peter-evans/create-issue-from-file@v4
+        uses: peter-evans/create-issue-from-file@v5
         with:
           title: Welcome to your new Julia package
           content-filepath: .github/post-init.md
