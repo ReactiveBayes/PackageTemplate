@@ -4,8 +4,6 @@ using BenchmarkTools
 using PkgBenchmark
 using Dates
 
-mkpath("results")
-
 s = ArgParseSettings()
 
 @add_arg_table s begin
@@ -19,6 +17,7 @@ args = parse_args(ARGS, s)
 
 branch = args["compare-branch"]
 outputdir = joinpath(pwd(), "benchmark", "results")
+mkpath(outputdir)
 
 if !isnothing(branch)
     name = first(ARGS)
