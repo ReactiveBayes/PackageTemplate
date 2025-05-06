@@ -41,7 +41,7 @@ For the initialization workflow to work properly, you need to set up a Personal 
    - Click "Generate new token" (classic)
    - Give it a descriptive name (e.g., "Package Template Initialize")
    - Set an appropriate expiration
-   - Select the `repo` scope (full control of repositories)
+   - Select the `repo` and `workflow` scopes (full control of repositories and workflows)
    - Click "Generate token"
    - Copy the generated token (you won't see it again!)
 
