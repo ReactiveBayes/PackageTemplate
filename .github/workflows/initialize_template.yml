@@ -73,7 +73,7 @@ jobs:
                   ("using PkgName", "using $pkg_name"),
                   ("@testset \"PkgName.jl\"", "@testset \"$pkg_name_with_jl\""),
                   ("Aqua.test_all(PkgName)", "Aqua.test_all($pkg_name)"),
-                  ("JET.test_package(PkgName)", "JET.test_package($pkg_name)")
+                  ("JET.test_package(PkgName", "JET.test_package($pkg_name")
               ],
               "benchmark/benchmarks.jl" => [
                   ("using PkgName", "using $pkg_name")
