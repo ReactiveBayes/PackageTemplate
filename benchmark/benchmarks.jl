@@ -1,7 +1,7 @@
 using PkgName
 using BenchmarkTools
 
-SUITE = BenchmarkGroup()
+const SUITE = BenchmarkGroup()
 
 # Add your benchmarks here
 SUITE["rand"] = @benchmarkable rand(10)
