@@ -42,6 +42,19 @@ jobs:
           # Full package name with .jl for GitHub URLs and documentation
           pkg_name_with_jl = endswith(repo_name_part, ".jl") ? repo_name_part : "$(repo_name_part).jl"
           
+          # The repo name becomes a Julia module name and appears in `using <name>`
+          # statements. Julia identifiers start with a letter or underscore and
+          # contain only letters, digits and underscores. GitHub allows repo names
+          # that are not valid identifiers (e.g. "my-package", "2fast"), so fail
+          # clearly instead of committing a package that does not parse.
+          if !occursin(r"^[A-Za-z_][A-Za-z0-9_]*$", pkg_name)
+              error(
+                  "Repository name '$repo_name_part' is not a valid Julia identifier. " *
+                  "Rename the repository (e.g. to 'FooBar' or 'FooBar.jl') so it can " *
+                  "be used as a Julia module name, then re-push."
+              )
+          end
+          
           println("Repository: $repo_name")
           println("Owner: $user_name")
           println("Package name: $pkg_name")
