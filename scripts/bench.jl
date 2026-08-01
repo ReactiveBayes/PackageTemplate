@@ -27,6 +27,7 @@ if !isnothing(branch)
     export_markdown(joinpath(outputdir, "benchmark_vs_$(name)_result.md"), result)
 else
     result = PkgBenchmark.benchmarkpkg(PkgName; retune = true)
-    export_markdown(joinpath(outputdir, "benchmark_$(now()).md"), result)
+    stamp = Dates.format(now(), "yyyy-mm-dd_HHMMSS")
+    export_markdown(joinpath(outputdir, "benchmark_$(stamp).md"), result)
     export_markdown(joinpath(outputdir, "last.md"), result)
 end
