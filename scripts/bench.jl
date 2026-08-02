@@ -20,11 +20,11 @@ outputdir = joinpath(pwd(), "benchmark", "results")
 mkpath(outputdir)
 
 if !isnothing(branch)
-    name = first(ARGS)
-    result = BenchmarkTools.judge(
-        PkgName, name; retune = true, judgekwargs = Dict(:time_tolerance => 0.1, :memory_tolerance => 0.05)
+    target = branch  # value of --compare-branch (args["compare-branch"]), not first(ARGS)
+    result = PkgBenchmark.judge(
+        PkgName, target; retune = true, judgekwargs = Dict(:time_tolerance => 0.1, :memory_tolerance => 0.05)
     )
-    export_markdown(joinpath(outputdir, "benchmark_vs_$(name)_result.md"), result)
+    export_markdown(joinpath(outputdir, "benchmark_vs_$(target)_result.md"), result)
 else
     result = PkgBenchmark.benchmarkpkg(PkgName; retune = true)
     export_markdown(joinpath(outputdir, "benchmark_$(now()).md"), result)
