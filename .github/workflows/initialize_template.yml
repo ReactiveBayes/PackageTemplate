@@ -65,9 +65,12 @@ jobs:
                   ("PLACEHOLDERNAME_CHANGE_MAKEFILE_LINE_22.jl", "$(pkg_name_with_jl)")
               ],
               "README.md" => [
+                  ("# PkgName", "# $pkg_name"),
+                  # Put the username.github.io pattern before "PkgName.jl" so the
+                  # Stable/Dev badge URLs get their owner localised too.
+                  ("username.github.io/PkgName.jl", "$user_name.github.io/$pkg_name_with_jl"),
                   ("username/PkgName.jl", "$user_name/$pkg_name_with_jl"),
-                  ("PkgName.jl", "$pkg_name_with_jl"),
-                  ("username.github.io/PkgName.jl", "$user_name.github.io/$pkg_name_with_jl")
+                  ("PkgName.jl", "$pkg_name_with_jl")
               ],
               "test/runtests.jl" => [
                   ("using PkgName", "using $pkg_name"),
