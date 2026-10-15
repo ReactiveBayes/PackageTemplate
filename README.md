@@ -1,69 +1,40 @@
 # PkgName
 
-[![Stable](https://img.shields.io/badge/docs-stable-blue.svg)](https://username.github.io/PkgName.jl/stable/)
-[![Dev](https://img.shields.io/badge/docs-dev-blue.svg)](https://username.github.io/PkgName.jl/dev/)
-[![Build Status](https://github.com/username/PkgName.jl/actions/workflows/CI.yml/badge.svg?branch=main)](https://github.com/username/PkgName.jl/actions/workflows/CI.yml?query=branch%3Amain)
-[![Coverage](https://codecov.io/gh/username/PkgName.jl/branch/main/graph/badge.svg)](https://codecov.io/gh/username/PkgName.jl)
+[![CI](https://github.com/ReactiveBayes/PackageTemplate/actions/workflows/CI.yml/badge.svg?branch=main)](https://github.com/ReactiveBayes/PackageTemplate/actions/workflows/CI.yml)
+[![Docs: dev](https://img.shields.io/badge/docs-dev-blue.svg)](https://reactivebayes.github.io/PackageTemplate/dev/)
+[![Coverage](https://codecov.io/gh/ReactiveBayes/PackageTemplate/graph/badge.svg)](https://codecov.io/gh/ReactiveBayes/PackageTemplate)
+[![Code style: Runic](https://img.shields.io/badge/code_style-%E1%9A%B1%E1%9A%A2%E1%9A%BE%E1%9B%81%E1%9A%B2-black)](https://github.com/fredrikekre/Runic.jl)
 [![Aqua](https://raw.githubusercontent.com/JuliaTesting/Aqua.jl/master/badge.svg)](https://github.com/JuliaTesting/Aqua.jl)
 
-## About
+<!-- template:start -->
+> **This is the ReactiveBayes template for a Julia package.** It is a working package with one
+> example function: tests with TestItemRunner, Aqua and JET, a documentation site with
+> Documenter, benchmarks with PkgBenchmark, Runic formatting, and CI, documentation, CompatHelper
+> and TagBot set up.
+>
+> **Writing message passing rules?** Start from
+> [MessagePassingRulesTemplate.jl](https://github.com/ReactiveBayes/MessagePassingRulesTemplate.jl)
+> instead: it is laid out as every rule package is, with an example node and its tests.
+>
+> 1. **Use this template** → *Create a new repository*, named `<Name>.jl`.
+> 2. Clone it and run, from its root, `julia setup.jl <Name>` (`--owner <GitHub owner>`, default
+>    `ReactiveBayes`; `--author "Name <email>"`). It renames the package, gives it a new UUID and
+>    links, and prints the steps left: the documentation key, GitHub Pages and registration.
+> 3. Replace the example function, `greet`, with your code, its tests and its documentation.
+>    `make test` and `make docs` check them as CI does.
+>
+> Everything between these lines disappears with `setup.jl`.
+<!-- template:end -->
 
-This is a template for creating new Julia packages. When you create a repository from this template, a GitHub action will automatically:
+Replace this paragraph with what your package does.
 
-1. Update the package name to match your repository name
-2. Generate a new UUID for your package
-3. Replace placeholder values with appropriate defaults
-4. Rename source files to match your package name
+```julia
+import Pkg; Pkg.add("PkgName")
+```
 
-## Features
-
-- Comprehensive CI setup with GitHub Actions
-- Documentation generation with Documenter.jl
-- Test suite with TestItemRunner.jl and Aqua.jl
-- Code quality checks with JET.jl
-- Benchmarking setup
-- Standardized project structure
-
-## How to Use
-
-1. Click "Use this template" to create a new repository
-2. Create a Personal Access Token (PAT) and add it to your repository (see section below)
-3. Wait for the initialization workflow to complete
-4. Clone your new repository
-5. Start developing your package!
-
-## Required: Personal Access Token Setup
-
-For the initialization workflow to work properly, you need to set up a Personal Access Token (PAT):
-
-1. Create a Personal Access Token:
-   - Go to your GitHub account → Settings → Developer settings → Personal access tokens → Tokens (classic)
-   - Click "Generate new token" (classic)
-   - Give it a descriptive name (e.g., "Package Template Initialize")
-   - Set an appropriate expiration
-   - Select the `repo` and `workflow` scopes (full control of repositories and workflows)
-   - Click "Generate token"
-   - Copy the generated token (you won't see it again!)
-
-2. Add the token to your repository:
-   - Go to your newly created repository
-   - Go to Settings → Secrets and variables → Actions
-   - Click "New repository secret"
-   - Name: `PAT_TOKEN`
-   - Value: paste your copied token
-   - Click "Add secret"
-
-This token allows the initialization workflow to commit changes to workflow files in your repository.
-
-## Custom Configuration
-
-After creating your repository, you may want to:
-
-- Update author information in `Project.toml`
-- Modify documentation settings in `docs/make.jl`
-- Adjust CI settings in `.github/workflows/`
-- Edit or extend the test suite in `test/`
-
-## License
-
-This template is licensed under MIT (see the LICENSE file). You are free to choose a different license for your own package.
+- Documentation: <https://reactivebayes.github.io/PackageTemplate/dev/>. `make docs` builds it
+  locally, into `docs/build`.
+- Tests: `make test` runs the suite as CI does; `make test test_args="tag:quality"` selects
+  items by tag, by name or by file. `make help` lists the other targets: `format`,
+  `check-format`, `benchmark`, `docs-serve`.
+- Julia 1.10 or later. MIT licence.

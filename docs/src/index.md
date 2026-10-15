@@ -4,8 +4,12 @@ CurrentModule = PkgName
 
 # PkgName
 
-Documentation for [PkgName](https://github.com/username/PkgName.jl).
+```@docs
+PkgName
+```
 
+## API
 
-```@index
+```@docs
+greet
 ```

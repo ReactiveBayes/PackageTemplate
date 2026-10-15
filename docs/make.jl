@@ -1,16 +1,22 @@
-using PkgName
+# The documentation site of PkgName. Build it with `make docs`, or `julia --project=docs docs/make.jl`.
 using Documenter
+using PkgName
 
 DocMeta.setdocmeta!(PkgName, :DocTestSetup, :(using PkgName); recursive = true)
 
-makedocs(;
+makedocs(
     modules = [PkgName],
-    authors = "Your Name <your.email@example.com> and contributors",
     sitename = "PkgName.jl",
-    format = Documenter.HTML(;
-        canonical = "https://username.github.io/PkgName.jl", edit_link = "main", assets = String[]
-    ),
-    pages = ["Home" => "index.md"]
+    # Every docstring appears on a page.
+    checkdocs = :all,
+    pages = ["Overview" => "index.md"],
+    format = Documenter.HTML(prettyurls = get(ENV, "CI", nothing) == "true"),
 )
 
-deploydocs(; repo = "github.com/username/PkgName.jl", devbranch = "main")
+deploydocs(
+    repo = "github.com/ReactiveBayes/PackageTemplate.git",
+    devbranch = "main",
+    # A preview for every pull request but CompatHelper's, whose documentation nobody reviews;
+    # `DocPreviewCleanup.yml` deletes it when the pull request closes.
+    push_preview = !startswith(get(ENV, "GITHUB_HEAD_REF", ""), "compathelper/"),
+)

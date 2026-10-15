@@ -60,3 +60,7 @@ coverage/
 *.lcov
 
 **/Manifest.toml
+
+# Coverage files CI writes
+lcov.info
+Manifest-v*.toml

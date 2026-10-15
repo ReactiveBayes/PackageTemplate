@@ -1,85 +1,47 @@
-.PHONY: help docs docs-serve docs-clean test format check-format clean deps deps-docs deps-scripts benchmark benchmark-compare
-
-# Colors for terminal output
-ifdef NO_COLOR
-GREEN  :=
-YELLOW :=
-WHITE  :=
-RESET  :=
-else
-GREEN  := $(shell tput -Txterm setaf 2)
-YELLOW := $(shell tput -Txterm setaf 3)
-WHITE  := $(shell tput -Txterm setaf 7)
-RESET  := $(shell tput -Txterm sgr0)
-endif
-
-# Default target
+SHELL := /bin/bash
+JULIA ?= julia
 .DEFAULT_GOAL := help
 
-## Show help for each of the Makefile targets
-help:
-	@echo ''
-	@echo 'PLACEHOLDERNAME_CHANGE_MAKEFILE_LINE_22.jl Makefile ${YELLOW}targets${RESET}:'
-	@echo ''
-	@echo '${GREEN}Documentation commands:${RESET}'
-	@echo '  ${YELLOW}docs${RESET}                 Build the documentation'
-	@echo '  ${YELLOW}docs-serve${RESET}           Serve documentation locally for preview in browser'
-	@echo '  ${YELLOW}docs-clean${RESET}           Clean the documentation build directory'
-	@echo ''
-	@echo '${GREEN}Development commands:${RESET}'
-	@echo '  ${YELLOW}deps${RESET}                 Install project dependencies'
-	@echo '  ${YELLOW}deps-docs${RESET}            Install documentation dependencies'
-	@echo '  ${YELLOW}deps-scripts${RESET}         Install script dependencies'
-	@echo '  ${YELLOW}test${RESET}                 Run project tests'
-	@echo '  ${YELLOW}format${RESET}               Format Julia code'
-	@echo '  ${YELLOW}check-format${RESET}         Check Julia code formatting (does not modify files)'
-	@echo '  ${YELLOW}clean${RESET}                Clean all generated files'
-	@echo ''
-	@echo '${GREEN}Benchmark commands:${RESET}'
-	@echo '  ${YELLOW}benchmark${RESET}            Run project benchmarks'
-	@echo '  ${YELLOW}benchmark-compare${RESET}    Run project benchmarks with comparison against specified branch'
-	@echo ''
-	@echo '${GREEN}Help:${RESET}'
-	@echo '  ${YELLOW}help${RESET}                 Show this help message'
-	@echo ''
-	@echo '${GREEN}Environment variables:${RESET}'
-	@echo '  ${YELLOW}NO_COLOR${RESET}             Set this variable to any value to disable colored output'
-	@echo ''
+# The variable CI sets: the items tagged `:slow` run too.
+CI_ENV := TEST_ALL=true
 
-## Documentation commands:
-docs: deps-docs ## Build the documentation
-	julia --project=docs/ docs/make.jl
+# Optional selection, passed to the suite: `make test test_args="tag:quality"`.
+test_args ?=
+TEST_ARGS := $(if $(test_args),test_args = split("$(test_args)") .|> string,)
 
-docs-serve: deps-docs ## Serve documentation locally for preview in browser
-	julia --project=docs/ -e 'using LiveServer; LiveServer.servedocs(launch_browser=true, port=5678)'
+.PHONY: help test test-fast format check-format docs docs-serve benchmark benchmark-compare clean
 
-docs-clean: ## Clean the documentation build directory
-	rm -rf docs/build
+help: ## Show this help
+	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) \
+	  | awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-14s\033[0m %s\n", $$1, $$2}'
 
-## Development commands:
-deps: ## Install project dependencies
-	julia --project -e 'using Pkg; Pkg.instantiate()'
+test: ## Run the suite as CI does; select with test_args="tag:<t> name:<n> <path>"
+	$(CI_ENV) $(JULIA) --project=. -e 'import Pkg; Pkg.test($(TEST_ARGS))'
 
-deps-docs: ## Install documentation dependencies
-	julia --project=docs/ -e 'using Pkg; Pkg.develop(path="."); Pkg.instantiate()'
+test-fast: ## Run the suite without the items tagged :slow
+	$(JULIA) --project=. -e 'import Pkg; Pkg.test($(TEST_ARGS))'
 
-deps-scripts: ## Install script dependencies
-	julia --project=scripts/ -e 'using Pkg; Pkg.instantiate()'
+format: ## Format the tree with Runic
+	$(JULIA) -e 'import Pkg; Pkg.activate(temp = true); Pkg.add("Runic"); using Runic; exit(Runic.main(["--inplace", "."]))'
 
-test: deps ## Run project tests
-	julia --project -e 'using Pkg; Pkg.test()'
+check-format: ## Check the formatting with Runic, without changing files
+	$(JULIA) -e 'import Pkg; Pkg.activate(temp = true); Pkg.add("Runic"); using Runic; exit(Runic.main(["--check", "--diff", "."]))'
 
-format: deps-scripts ## Format Julia code
-	julia --project=scripts/ scripts/formatter.jl --overwrite
+docs: ## Build the documentation into docs/build, running every example and doctest
+	$(JULIA) --project=docs -e 'import Pkg; Pkg.instantiate()'
+	$(JULIA) --project=docs docs/make.jl
 
-check-format: deps-scripts ## Check Julia code formatting (does not modify files)
-	julia --project=scripts/ scripts/formatter.jl
+docs-serve: ## Build and serve the documentation with live reload
+	$(JULIA) --project=docs -e 'import Pkg; Pkg.instantiate(); using LiveServer; servedocs()'
 
-benchmark: deps-scripts ## Run project benchmarks
-	julia --project=scripts/ scripts/bench.jl
+benchmark: ## Run the benchmarks in benchmark/, results into benchmark/results
+	$(JULIA) --project=scripts -e 'import Pkg; Pkg.instantiate()'
+	$(JULIA) --project=scripts scripts/bench.jl
 
-benchmark-compare: deps-scripts ## Run project benchmarks with comparison against specified branch
-	julia --project=scripts/ scripts/bench.jl --compare-branch $(branch)
+benchmark-compare: ## Compare the benchmarks with a branch: make benchmark-compare branch=main
+	$(JULIA) --project=scripts -e 'import Pkg; Pkg.instantiate()'
+	$(JULIA) --project=scripts scripts/bench.jl --compare-branch $(branch)
 
-clean: docs-clean ## Clean all generated files
-	rm -rf .julia/compiled
+clean: ## Remove the documentation build and coverage files
+	rm -rf docs/build lcov.info
+	find . \( -name '*.jl.cov' -o -name '*.jl.*.cov' -o -name '*.jl.mem' \) -delete
