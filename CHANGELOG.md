@@ -6,4 +6,9 @@ All notable changes to PkgName.jl are documented here. The format is based on
 
 ## [Unreleased]
 
+### Changed
+
+- The test-only compat entry for JET admits 0.13, which needs Julia 1.12; on 1.10 and 1.11 the
+  suite keeps an earlier JET.
+
 [Unreleased]: https://github.com/ReactiveBayes/PackageTemplate/commits/main

@@ -1,7 +1,7 @@
 name = "PkgName"
 uuid = "69a11d22-7c62-4348-b0c8-57c08a1b1a46"
-version = "0.1.0"
 authors = ["ReactiveBayes and contributors"]
+version = "0.1.0"
 
 [compat]
 Aqua = "0.8"
